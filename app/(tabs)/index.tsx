@@ -1,74 +1,104 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React from "react";
+import NoMedications from "@/components/NoMedications";
+import Header from "@/components/Header";
+import {
+  dateToWeekRange,
+  formatDateToYYYYMMDD,
+  onlyDateDigit,
+} from "@/utils/dateFormatter";
+import Colors from "@/constants/Colors";
 
 export default function HomeScreen() {
+  const MedicationsData = null;
+  const todayDate = formatDateToYYYYMMDD(new Date());
+  const currentWeekDates = dateToWeekRange(); // returns Array of 7 week dates
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      <View style={styles.progressContainer}>
+        <Header
+          title={"Hello! 👋"}
+          color={"white"}
+          iconName="settings-outline"
+          onPressIcon={() => console.log("settings pressed!")}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+      <View style={styles.medicationsContainer}>
+        <View style={styles.dateListContainer}>
+          {currentWeekDates.map((item) => (
+            <View
+              key={item.date}
+              style={{ flexDirection: "column", alignItems: "center" }}
+            >
+              <Text style={{ paddingVertical: 8, color: Colors.DARK_GRAY }}>
+                {item.day.slice(0, 3)}
+              </Text>
+              <TouchableOpacity
+                style={[
+                  styles.dateContainer,
+                  todayDate === item.date && styles.todayDate,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.dateText,
+                    todayDate === item.date && { color: "white" },
+                  ]}
+                >
+                  {onlyDateDigit(item.date)}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+
+        <View style={{ width: "100%" }}></View>
+        {!MedicationsData && <NoMedications />}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  progressContainer: {
+    flex: 2,
+    backgroundColor: Colors.PRIMARY,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  medicationsContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    backgroundColor: "white",
+    flex: 3,
+    justifyContent: "center",
+  },
+  dateListContainer: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  dateContainer: {
+    padding: 16,
+    backgroundColor: Colors.LIGHT_GRAY,
+    borderRadius: 99,
+  },
+  dateText: {
+    color: Colors.DARK_GRAY,
+    fontSize: 16,
+  },
+  todayDate: {
+    backgroundColor: Colors.PRIMARY,
   },
 });

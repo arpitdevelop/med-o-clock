@@ -1,39 +1,61 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { Stack } from "expo-router";
+// import { SQLiteProvider, SQLiteDatabase } from "expo-sqlite";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  // Reanimated 'value' warning ignore
+  configureReanimatedLogger({
+    level: ReanimatedLogLevel.warn,
+    strict: false, // Reanimated runs in 'strict: true' mode by default
   });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  // const createDBIfNeeded = async (db: SQLiteDatabase) => {
+  //   console.log("Creating db...");
+  //   try {
+  //     await db.execAsync(
+  //       `CREATE TABLE IF NOT EXISTS medications (
+  //         id INTEGER PRIMARY KEY AUTOINCREMENT,
+  //         name TEXT NOT NULL,
+  //         dose TEXT NOT NULL,
+  //         type TEXT NOT NULL,
+  //         when_to TEXT NOT NULL,
+  //         start_date TEXT NOT NULL,
+  //         end_date TEXT NOT NULL,
+  //         comment TEXT
+  //         );`
+  //     );
+  //     console.log("Created medications db");
+  //   } catch (error) {
+  //     console.log("Error Found ======>");
+  //     console.log(error);
+  //   }
+  //   try {
+  //     await db.execAsync(
+  //       `CREATE TABLE IF NOT EXISTS reminders (
+  //         id INTEGER PRIMARY KEY AUTOINCREMENT,
+  //         medication_id INTEGER NOT NULL,
+  //         time TEXT NOT NULL,
+  //         FOREIGN KEY (medication_id) REFERENCES medications(id) ON DELETE CASCADE
+  //         );`
+  //     );
+  //     console.log("Created reminders db");
+  //   } catch (error) {
+  //     console.log("Error Found ======>");
+  //     console.log(error);
+  //   }
+  // };
 
-  if (!loaded) {
-    return null;
-  }
-
+  // <SQLiteProvider databaseName="medications.db" onInit={createDBIfNeeded}></SQLiteProvider>
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="add-new-medication"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
+    </Stack>
   );
 }
