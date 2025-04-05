@@ -1,10 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import NoMedications from "@/components/NoMedications";
 import Header from "@/components/Header";
@@ -14,53 +8,58 @@ import {
   onlyDateDigit,
 } from "@/utils/dateFormatter";
 import Colors from "@/constants/Colors";
+import { Redirect } from "expo-router";
 
 export default function HomeScreen() {
   const MedicationsData = null;
   const todayDate = formatDateToYYYYMMDD(new Date());
   const currentWeekDates = dateToWeekRange(); // returns Array of 7 week dates
   return (
-    <View style={styles.container}>
-      <View style={styles.progressContainer}>
-        <Header
-          title={"Hello! 👋"}
-          color={"white"}
-          iconName="settings-outline"
-          onPressIcon={() => console.log("settings pressed!")}
-        />
-      </View>
-      <View style={styles.medicationsContainer}>
-        <View style={styles.dateListContainer}>
-          {currentWeekDates.map((item) => (
-            <View
-              key={item.date}
-              style={{ flexDirection: "column", alignItems: "center" }}
-            >
-              <Text style={{ paddingVertical: 8, color: Colors.DARK_GRAY }}>
-                {item.day.slice(0, 3)}
-              </Text>
-              <TouchableOpacity
-                style={[
-                  styles.dateContainer,
-                  todayDate === item.date && styles.todayDate,
-                ]}
+    <View>
+      {/* <View style={styles.container}>
+        <View style={styles.progressContainer}>
+          <Header
+            title={"Hello! 👋"}
+            color={"white"}
+            iconName="settings-outline"
+            onPressIcon={() => console.log("settings pressed!")}
+          />
+        </View>
+        <View style={styles.medicationsContainer}>
+          <View style={styles.dateListContainer}>
+            {currentWeekDates.map((item) => (
+              <View
+                key={item.date}
+                style={{ flexDirection: "column", alignItems: "center" }}
               >
-                <Text
+                <Text style={{ paddingVertical: 8, color: Colors.DARK_GRAY }}>
+                  {item.day.slice(0, 3)}
+                </Text>
+                <TouchableOpacity
                   style={[
-                    styles.dateText,
-                    todayDate === item.date && { color: "white" },
+                    styles.dateContainer,
+                    todayDate === item.date && styles.todayDate,
                   ]}
                 >
-                  {onlyDateDigit(item.date)}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+                  <Text
+                    style={[
+                      styles.dateText,
+                      todayDate === item.date && { color: "white" },
+                    ]}
+                  >
+                    {onlyDateDigit(item.date)}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
 
-        <View style={{ width: "100%" }}></View>
-        {!MedicationsData && <NoMedications />}
-      </View>
+          <View style={{ width: "100%" }}></View>
+          {!MedicationsData && <NoMedications />}
+        </View>
+      </View> */}
+
+      <Redirect href={"login"} />
     </View>
   );
 }

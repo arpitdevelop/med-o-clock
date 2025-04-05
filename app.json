@@ -8,16 +8,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.arpit.develop.MedOClock"
-    },
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -37,6 +27,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.Med-O-Clock"
     }
   }
 }
