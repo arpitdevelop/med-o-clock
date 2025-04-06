@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import NoMedications from "@/components/NoMedications";
 import Header from "@/components/Header";
@@ -9,58 +9,76 @@ import {
 } from "@/utils/dateFormatter";
 import Colors from "@/constants/Colors";
 import { Redirect } from "expo-router";
+import { signOut } from "firebase/auth";
+import { auth } from "@/config/FirebaseConfig";
+import {
+  SafeAreaView,
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { clearLocalStorage } from "@/service/storage";
 
 export default function HomeScreen() {
   const MedicationsData = null;
   const todayDate = formatDateToYYYYMMDD(new Date());
   const currentWeekDates = dateToWeekRange(); // returns Array of 7 week dates
+
+  const { top } = useSafeAreaInsets();
+
   return (
-    <View>
-      {/* <View style={styles.container}>
-        <View style={styles.progressContainer}>
-          <Header
-            title={"Hello! 👋"}
-            color={"white"}
-            iconName="settings-outline"
-            onPressIcon={() => console.log("settings pressed!")}
-          />
-        </View>
-        <View style={styles.medicationsContainer}>
-          <View style={styles.dateListContainer}>
-            {currentWeekDates.map((item) => (
-              <View
-                key={item.date}
-                style={{ flexDirection: "column", alignItems: "center" }}
+    <View style={styles.container}>
+      <View style={[styles.progressContainer, { paddingTop: top }]}>
+        <Header
+          title={"Hello! 👋"}
+          color={"white"}
+          iconName="settings-outline"
+          onPressIcon={() => console.log("settings pressed!")}
+        />
+      </View>
+      <View style={styles.medicationsContainer}>
+        <View style={styles.dateListContainer}>
+          {currentWeekDates.map((item) => (
+            <View
+              key={item.date}
+              style={{ flexDirection: "column", alignItems: "center" }}
+            >
+              <Text style={{ paddingVertical: 8, color: Colors.DARK_GRAY }}>
+                {item.day.slice(0, 3)}
+              </Text>
+              <TouchableOpacity
+                style={[
+                  styles.dateContainer,
+                  todayDate === item.date && styles.todayDate,
+                ]}
               >
-                <Text style={{ paddingVertical: 8, color: Colors.DARK_GRAY }}>
-                  {item.day.slice(0, 3)}
-                </Text>
-                <TouchableOpacity
+                <Text
                   style={[
-                    styles.dateContainer,
-                    todayDate === item.date && styles.todayDate,
+                    styles.dateText,
+                    todayDate === item.date && { color: "white" },
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.dateText,
-                      todayDate === item.date && { color: "white" },
-                    ]}
-                  >
-                    {onlyDateDigit(item.date)}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-
-          <View style={{ width: "100%" }}></View>
-          {!MedicationsData && <NoMedications />}
+                  {onlyDateDigit(item.date)}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
-      </View> */}
 
-      <Redirect href={"login"} />
+        <View style={{ width: "100%" }}></View>
+        {!MedicationsData && <NoMedications />}
+      </View>
     </View>
+
+    // <View>
+    // {/* <Button
+    //   title="logout"
+    //   onPress={() => {
+    //     clearLocalStorage();
+    //     signOut(auth);
+    //   }}
+    // /> */}
+    //   {/* <Redirect href={"login"} /> */}
+    // </View>
   );
 }
 
@@ -70,6 +88,7 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     flex: 2,
+
     backgroundColor: Colors.PRIMARY,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
