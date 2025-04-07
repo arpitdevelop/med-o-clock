@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Keyboard,
   ScrollView,
@@ -14,16 +15,21 @@ import Header from "@/components/Header";
 import AddMedicationForm from "@/components/addNewMedication/AddMedicationForm";
 import Colors from "@/constants/Colors";
 import { formDataType } from "@/constants/types";
-// import { useSQLiteContext } from "expo-sqlite";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { doc, setDoc } from "firebase/firestore";
 
 import {
   formatDateToStringFull,
   formatTimeToHHMM,
 } from "@/utils/dateFormatter";
+import { db } from "@/config/FirebaseConfig";
+import { getLocalStorage } from "@/service/storage";
 
 export default function AddNewMedication() {
   const router = useRouter();
-  // const database = useSQLiteContext();
+  const [loading, setLoading] = useState(false);
+
+  const { top } = useSafeAreaInsets();
 
   // disables keyboard when scroll
   const handleScroll = () => {
@@ -51,11 +57,11 @@ export default function AddNewMedication() {
       ...prev,
       [key]: { value: value, isValid: true },
     }));
-    console.log(formData);
   };
 
   // on pressing Submit button
   const handleSubmit = async () => {
+    setLoading(true);
     // converting formData in proper format for our data.
     const submitData = {
       name: formData.name.value.trim(),
@@ -88,7 +94,6 @@ export default function AddNewMedication() {
       !endDateIsValid ||
       !remindersIsValid
     ) {
-      Alert.alert("Error", "Please fill all the fields correctly");
       setFormData((prev) => {
         return {
           name: { value: prev.name.value, isValid: nameIsValid },
@@ -101,54 +106,39 @@ export default function AddNewMedication() {
           reminders: { value: prev.reminders.value, isValid: remindersIsValid },
         };
       });
+      Alert.alert("Error", "Please fill all the fields correctly");
       console.log(formData);
       return;
     }
 
-    console.log("verified");
-    console.log(submitData);
+    console.log("verified: ", submitData);
+    const user = await getLocalStorage("userDetail");
 
-    // try {
-    //   await database.withTransactionAsync(async () => {
-    //     const result = await database.runAsync(
-    //       "INSERT INTO medications (name,dose,type,when_to,start_date,end_date,comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    //       submitData.name,
-    //       submitData.dose,
-    //       submitData.type,
-    //       submitData.when,
-    //       formatDateToStringFull(submitData.startDate),
-    //       formatDateToStringFull(submitData.endDate),
-    //       submitData.comment
-    //     );
-    //     console.log(
-    //       "submitted medications in db ===> insertID: ",
-    //       result.lastInsertRowId
-    //     );
-    //     const medicationId = result.lastInsertRowId;
-
-    //     for (const reminder of submitData.reminders) {
-    //       try {
-    //         await database.runAsync(
-    //           `INSERT INTO reminders (medication_id, time) VALUES (?, ?)`,
-    //           medicationId,
-    //           formatTimeToHHMM(reminder.time)
-    //         );
-    //         console.log("submitted reminder in db: ", reminder.time);
-    //       } catch (reminderError) {
-    //         console.error("Error inserting reminder:", reminderError);
-    //         throw reminderError; // Rollback the transaction on error
-    //       }
-    //     }
-    //   });
-    // } catch (error) {
-    //   console.error("Transaction failed:", error);
-    // }
+    try {
+      // Add a new document in collection "medication"
+      const docID = Date.now().toString();
+      await setDoc(doc(db, "medication", docID), {
+        ...submitData,
+        userEmail: user.email,
+        docID: docID,
+      });
+      Alert.alert("Great!", "New medication added successfully!", [
+        {
+          text: "Okay",
+          onPress: () => router.replace("/(tabs)"),
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <ScrollView
-        style={styles.container}
+        style={[styles.container, { paddingTop: top }]}
         onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
       >
@@ -165,7 +155,11 @@ export default function AddNewMedication() {
       </ScrollView>
       <View style={styles.submitBtnContainer}>
         <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
-          <Text style={styles.submitBtnText}>Submit</Text>
+          {loading ? (
+            <ActivityIndicator size={"large"} color={"#fff"} />
+          ) : (
+            <Text style={styles.submitBtnText}>Submit</Text>
+          )}
         </TouchableOpacity>
       </View>
     </>
@@ -175,7 +169,7 @@ export default function AddNewMedication() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 20,
+    // paddingTop: 20,
     backgroundColor: "white",
     flex: 1,
   },

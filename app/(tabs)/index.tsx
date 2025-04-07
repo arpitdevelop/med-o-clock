@@ -8,20 +8,18 @@ import {
   onlyDateDigit,
 } from "@/utils/dateFormatter";
 import Colors from "@/constants/Colors";
-import { Redirect } from "expo-router";
 import { signOut } from "firebase/auth";
 import { auth } from "@/config/FirebaseConfig";
-import {
-  SafeAreaView,
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { clearLocalStorage } from "@/service/storage";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const MedicationsData = null;
   const todayDate = formatDateToYYYYMMDD(new Date());
   const currentWeekDates = dateToWeekRange(); // returns Array of 7 week dates
+
+  const router = useRouter();
 
   const { top } = useSafeAreaInsets();
 
@@ -67,38 +65,39 @@ export default function HomeScreen() {
         <View style={{ width: "100%" }}></View>
         {!MedicationsData && <NoMedications />}
       </View>
+      <View>
+        <Button
+          title="logout"
+          onPress={() => {
+            clearLocalStorage();
+            signOut(auth);
+            router.replace("/login");
+            console.log("logout");
+          }}
+        />
+        {/* <Redirect href={"login"} /> */}
+      </View>
     </View>
-
-    // <View>
-    // {/* <Button
-    //   title="logout"
-    //   onPress={() => {
-    //     clearLocalStorage();
-    //     signOut(auth);
-    //   }}
-    // /> */}
-    //   {/* <Redirect href={"login"} /> */}
-    // </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.PRIMARY,
   },
   progressContainer: {
-    flex: 2,
-
-    backgroundColor: Colors.PRIMARY,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    // flex: 2,
+    // backgroundColor: Colors.PRIMARY,
   },
   medicationsContainer: {
     paddingHorizontal: 8,
     paddingVertical: 10,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     flex: 3,
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   dateListContainer: {
     display: "flex",

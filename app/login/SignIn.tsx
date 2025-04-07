@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,8 +22,11 @@ export default function SignIn() {
 
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onSignIn = () => {
+    console.log("tapped");
+    setLoading(true);
     if (!email || !pass) {
       Alert.alert("Invalid Email or Password!");
     }
@@ -49,7 +53,11 @@ export default function SignIn() {
         if (errorCode == "auth/invalid-credential") {
           Alert.alert("Invalid Email or Password!");
         }
-      });
+        if (errorCode == "auth/invalid-email") {
+          Alert.alert("Check your email!");
+        }
+      })
+      .then(() => setLoading(false));
   };
 
   return (
@@ -89,7 +97,10 @@ export default function SignIn() {
             secureTextEntry={showPass}
             onChangeText={(value) => setPass(value)}
           />
-          <TouchableOpacity onPress={() => setShowPass((prev) => !prev)}>
+          <TouchableOpacity
+            disabled
+            onPress={() => setShowPass((prev) => !prev)}
+          >
             <Ionicons
               name={showPass ? "eye" : "eye-off"}
               size={15}
@@ -101,10 +112,15 @@ export default function SignIn() {
 
       <View style={{ marginTop: 50, gap: 14 }}>
         <TouchableOpacity style={styles.signInBtn} onPress={onSignIn}>
-          <Text style={styles.signInBtnTxt}>Sign In</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.signInBtnTxt}>Sign In</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
+          disabled={loading}
           style={styles.signUpBtn}
           onPress={() => router.push("/login/SignUp")}
         >
