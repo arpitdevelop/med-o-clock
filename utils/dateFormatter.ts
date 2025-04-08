@@ -45,3 +45,15 @@ export const dateToWeekRange = () => {
   }
   return weekDates;
 };
+
+// get an array of every date between startDate and endDate
+export const startToEndDates = (startDate: Date, endDate: Date) => {
+  const start = moment(startDate, "MM/DD/YYYY");
+  const end = moment(endDate, "MM/DD/YYYY");
+  const dates = [];
+  while (start.isSameOrBefore(end)) {
+    dates.push(start.format("MM/DD/YYYY"));
+    start.add(1, "days");
+  }
+  return dates;
+};

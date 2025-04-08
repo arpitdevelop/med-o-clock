@@ -21,6 +21,7 @@ import { doc, setDoc } from "firebase/firestore";
 import {
   formatDateToStringFull,
   formatTimeToHHMM,
+  startToEndDates,
 } from "@/utils/dateFormatter";
 import { db } from "@/config/FirebaseConfig";
 import { getLocalStorage } from "@/service/storage";
@@ -111,7 +112,9 @@ export default function AddNewMedication() {
       return;
     }
 
+    const dates = startToEndDates(submitData.startDate, submitData.endDate);
     console.log("verified: ", submitData);
+    console.log(dates);
     const user = await getLocalStorage("userDetail");
 
     try {
@@ -121,6 +124,7 @@ export default function AddNewMedication() {
         ...submitData,
         userEmail: user.email,
         docID: docID,
+        dates: dates,
       });
       Alert.alert("Great!", "New medication added successfully!", [
         {
