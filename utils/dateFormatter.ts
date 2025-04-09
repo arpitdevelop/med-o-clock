@@ -48,11 +48,11 @@ export const dateToWeekRange = () => {
 
 // get an array of every date between startDate and endDate
 export const startToEndDates = (startDate: Date, endDate: Date) => {
-  const start = moment(startDate, "MM/DD/YYYY");
-  const end = moment(endDate, "MM/DD/YYYY");
+  const start = moment(startDate, "YYYY-MM-DD");
+  const end = moment(endDate, "YYYY-MM-DD");
   const dates = [];
   while (start.isSameOrBefore(end)) {
-    dates.push(start.format("MM/DD/YYYY"));
+    dates.push(start.format("YYYY-MM-DD"));
     start.add(1, "days");
   }
   return dates;

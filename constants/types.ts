@@ -1,3 +1,5 @@
+import { signInWithRedirect } from "firebase/auth";
+
 export interface listDataType {
   name: string;
   imageSrc: number; // Type for require() result
@@ -20,3 +22,17 @@ export interface formDataType {
   comment: { value: string; isValid: boolean };
   reminders: { value: { id: number; time: Date }[]; isValid: boolean };
 }
+
+// export interface medDataType {
+//   name?: string;
+//   type?: string;
+//   dose?: string;
+//   when?: string;
+//   startDate?: Date;
+//   endDate?: Date;
+//   comment?: string;
+//   reminders?: { id: number; time: Date }[];
+//   dates?: string[];
+//   docID: string;
+//   userEmail?: string;
+// }

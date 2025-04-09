@@ -160,7 +160,7 @@ export default function AddNewMedication() {
       <View style={styles.submitBtnContainer}>
         <TouchableOpacity onPress={handleSubmit} style={styles.submitBtn}>
           {loading ? (
-            <ActivityIndicator size={"large"} color={"#fff"} />
+            <ActivityIndicator size={"small"} color={"#fff"} />
           ) : (
             <Text style={styles.submitBtnText}>Submit</Text>
           )}
