@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 
 export const formatDate = (timestamp: number) => {
@@ -56,4 +57,12 @@ export const startToEndDates = (startDate: Date, endDate: Date) => {
     start.add(1, "days");
   }
   return dates;
+};
+
+export const fbTimestampToTime = (timestamp: Timestamp) => {
+  const jsDate = new Timestamp(
+    timestamp.seconds,
+    timestamp.nanoseconds
+  ).toDate();
+  return moment(jsDate).format("h:mm a");
 };

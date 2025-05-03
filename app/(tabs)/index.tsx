@@ -11,6 +11,7 @@ import NoMedications from "@/components/NoMedications";
 import Header from "@/components/Header";
 import {
   dateToWeekRange,
+  fbTimestampToTime,
   formatDateToYYYYMMDD,
   onlyDateDigit,
 } from "@/utils/dateFormatter";
@@ -25,11 +26,13 @@ import {
   DocumentData,
   getDocs,
   query,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import MedCardItem from "@/components/MedCardItem";
 
 export default function HomeScreen() {
+  const [loading, setLoading] = useState(false);
   const [medList, setMedList] = useState<DocumentData[]>([]);
   const todayDate = formatDateToYYYYMMDD(new Date());
   const [selectedDate, setSelectedDate] = useState(todayDate);
@@ -42,25 +45,46 @@ export default function HomeScreen() {
   }, [selectedDate]);
 
   const getMedicationsList = async (selectedDate: string) => {
+    setLoading(true);
     const user = await getLocalStorage("userDetail");
+    setMedList([]);
+
     try {
-      const q = query(
-        collection(db, "medication"),
-        where("userEmail", "==", user.email),
-        where("dates", "array-contains", selectedDate)
-      );
-      const querySnapshot = await getDocs(q);
-      setMedList([]);
-      querySnapshot.forEach((doc) => {
-        // console.log("docID:" + doc.id + "==>", doc.data());
-        setMedList((prev) => [...prev, doc.data()]);
-      });
+      if (user) {
+        const q = query(
+          collection(db, "medication"),
+          where("userEmail", "==", user.email),
+          where("dates", "array-contains", selectedDate)
+        );
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          // console.log("docID:" + doc.id + "==>", doc.data());
+          setMedList((prev) => [...prev, doc.data()]);
+        });
+      } else {
+        handleLogout();
+      }
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      const errorCode = error.code;
+      console.log(errorCode);
+      if (errorCode == "permission-denied") {
+        handleLogout();
+      }
+      setLoading(false);
     }
   };
 
   const { top } = useSafeAreaInsets();
+
+  const handleLogout = () => {
+    clearLocalStorage();
+    signOut(auth);
+    router.replace("/login");
+    console.log("logout");
+  };
 
   return (
     <View style={styles.container}>
@@ -68,8 +92,8 @@ export default function HomeScreen() {
         <Header
           title={"Hello! 👋"}
           color={"#fff"}
-          iconName="settings-outline"
-          onPressIcon={() => console.log("settings pressed!")}
+          iconName="medkit-outline"
+          onPressIcon={() => router.push("/add-new-medication")}
         />
       </View>
       <View style={styles.medicationsContainer}>
@@ -105,26 +129,37 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {medList.length > 0 ? (
-          <FlatList
-            data={medList}
-            renderItem={({ item, index }) => <MedCardItem data={item} />}
-            keyExtractor={(item) => item.docID}
-          />
-        ) : (
-          <NoMedications />
-        )}
+        <FlatList
+          refreshing={loading}
+          onRefresh={() => getMedicationsList(selectedDate)}
+          data={medList}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item, index }) =>
+            // To repeat same entry for multiple reminders
+            item.reminders.map((reminder: { id: number; time: Timestamp }) => (
+              <TouchableOpacity
+                key={reminder.id}
+                onPress={() =>
+                  router.push({
+                    pathname: "/action-modal",
+                    params: {
+                      selectedDate: selectedDate,
+                      time: fbTimestampToTime(reminder.time),
+                      ...item,
+                    },
+                  })
+                }
+              >
+                <MedCardItem data={item} reminder={reminder.time} />
+              </TouchableOpacity>
+            ))
+          }
+          keyExtractor={(item) => item.docID}
+        />
+        {medList?.length < 1 && !loading && <NoMedications />}
       </View>
       <View>
-        <Button
-          title="logout"
-          onPress={() => {
-            clearLocalStorage();
-            signOut(auth);
-            router.replace("/login");
-            console.log("logout");
-          }}
-        />
+        <Button title="logout" onPress={handleLogout} />
       </View>
     </View>
   );
@@ -136,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.PRIMARY,
   },
   medicationsContainer: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     paddingVertical: 10,
     backgroundColor: "#fff",
     borderTopLeftRadius: 24,
@@ -152,11 +187,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   dateContainer: {
-    width: "100%",
+    aspectRatio: 1,
+    justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    width: "100%",
+    padding: 2,
     backgroundColor: Colors.LIGHT_GRAY,
-    borderRadius: 99,
+    borderRadius: 20,
   },
   dateText: {
     color: Colors.DARK_GRAY,

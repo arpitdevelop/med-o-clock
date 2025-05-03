@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 
-import Colors from "@/constants/Colors";
 import { headerProps } from "@/constants/types";
 
 export default function Header({
@@ -15,7 +14,7 @@ export default function Header({
     <View style={styles.headerContainer}>
       <Text style={[styles.headerText, { color: color }]}>{title}</Text>
       <TouchableOpacity onPress={onPressIcon}>
-        <Ionicons name={iconName} size={34} color={color} />
+        <Ionicons name={iconName} size={30} color={color} />
       </TouchableOpacity>
     </View>
   );
@@ -26,8 +25,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 12,
+    marginBottom: 12,
+    paddingHorizontal: 18,
     paddingTop: 16,
     // width: "100%",
     // position: "absolute",

@@ -97,10 +97,7 @@ export default function SignIn() {
             secureTextEntry={showPass}
             onChangeText={(value) => setPass(value)}
           />
-          <TouchableOpacity
-            disabled
-            onPress={() => setShowPass((prev) => !prev)}
-          >
+          <TouchableOpacity onPress={() => setShowPass((prev) => !prev)}>
             <Ionicons
               name={showPass ? "eye" : "eye-off"}
               size={15}

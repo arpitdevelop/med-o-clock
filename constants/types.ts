@@ -8,7 +8,7 @@ export interface listDataType {
 export interface headerProps {
   title: string;
   color: string;
-  iconName: "close" | "settings-outline";
+  iconName: "close" | "settings-outline" | "medkit-outline";
   onPressIcon: () => void;
 }
 
