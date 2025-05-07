@@ -6,12 +6,15 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
+
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { medType } from "@/constants/optionsData";
 import InfoCard from "@/components/actionModal/InfoCard";
 import ActionBtn from "@/components/ui/ActionBtn";
 import Colors from "@/constants/Colors";
+import { db } from "@/config/FirebaseConfig";
 
 export default function ActionModal() {
   const medicine = useLocalSearchParams();
@@ -20,6 +23,20 @@ export default function ActionModal() {
   const imageSource = medType.find(
     (item) => item.name === medicine.type
   )?.imageSrc;
+
+  const updateStatus = async (status) => {
+    try {
+      // Add a new document in collection "cities"
+      const docRef = doc(db, "medication", medicine?.docID);
+      await updateDoc(docRef, {
+        action: arrayUnion({
+          status: status,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={{ alignItems: "center", gap: 10 }}>
