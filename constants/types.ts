@@ -36,3 +36,25 @@ export interface formDataType {
 //   docID: string;
 //   userEmail?: string;
 // }
+
+export interface Medicine {
+  id: number;
+  name: string;
+  type: string;
+  dose: string;
+  _when: string;
+  start_date: string;
+  end_date: string;
+  comment: string;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+  reminders: Reminder[];
+}
+export interface Reminder {
+  id: number;
+  medicine_id: number;
+  time: string;
+  is_active: number;
+  created_at: string;
+}

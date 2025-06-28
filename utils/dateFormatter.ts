@@ -25,24 +25,34 @@ export const formatDateToYYYYMMDD = (date: Date) => {
   return moment(date).format("YYYY-MM-DD");
 };
 
-export const onlyDateDigit = (dateString: string) => {
-  let date = new Date(dateString);
-  return moment(date).format("D");
-};
-
 // get array of dates of current week
+// export const dateToWeekRange = () => {
+//   const currDate = new Date();
+//   const weekStart = moment(currDate).day(1).format("YYYY-MM-DD");
+//   const weekEnd = moment(currDate).day(7).format("YYYY-MM-DD");
+//   const weekDates = [];
+//   let loopDate = new Date(weekStart);
+//   while (loopDate <= new Date(weekEnd)) {
+//     weekDates.push(moment(loopDate).format("YYYY-MM-DD"));
+//     loopDate.setDate(loopDate.getDate() + 1);
+//   }
+//   console.log(weekDates);
+//   console.log(moment().format("hh:mm"));
+
+//   return weekDates;
+// };
+
 export const dateToWeekRange = () => {
-  const currDate = new Date();
-  const weekStart = moment(currDate).day(1).format("YYYY-MM-DD");
-  const weekEnd = moment(currDate).day(7).format("YYYY-MM-DD");
+  const currDate = moment();
+
+  // Set Monday as the first day of the week
+  const weekStart = currDate.clone().startOf("isoWeek"); // ISO week starts on Monday
+  // const startOfWeek = moment(currDate).startOf("week").add(1, "day"); // Monday
+
   const weekDates = [];
-  let loopDate = new Date(weekStart);
-  while (loopDate <= new Date(weekEnd)) {
-    weekDates.push({
-      date: moment(loopDate).format("YYYY-MM-DD"),
-      day: moment(loopDate).format("dddd"),
-    });
-    loopDate.setDate(loopDate.getDate() + 1);
+
+  for (let i = 0; i < 7; i++) {
+    weekDates.push(weekStart.clone().add(i, "days").format("YYYY-MM-DD"));
   }
   return weekDates;
 };
