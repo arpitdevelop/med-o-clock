@@ -1,5 +1,5 @@
 // Utility functions
-export const formatDate = (date: Date) => {
+export const momentformatDate = (date: Date) => {
   // Returns: '2025-06-22'
   return date.toISOString().split("T")[0];
 };

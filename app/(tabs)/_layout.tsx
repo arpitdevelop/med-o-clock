@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getLocalStorage } from "@/service/storage";
 
 export default function TabLayout() {
-  const router = useRouter();
+  // const router = useRouter();
 
   // const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   // // check if login or not
@@ -25,16 +25,16 @@ export default function TabLayout() {
   //   }
   // });
 
-  const getUserDetails = async () => {
-    const userDetail = await getLocalStorage("userDetail");
-    if (!userDetail) {
-      router.replace("/login");
-    }
-  };
+  // const getUserDetails = async () => {
+  //   const userDetail = await getLocalStorage("userDetail");
+  //   if (!userDetail) {
+  //     router.replace("/login");
+  //   }
+  // };
 
-  useEffect(() => {
-    getUserDetails();
-  }, []);
+  // useEffect(() => {
+  //   getUserDetails();
+  // }, []);
 
   return (
     <Tabs screenOptions={{ headerShown: false }}>

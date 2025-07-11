@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -14,29 +13,19 @@ import { medType } from "@/constants/optionsData";
 import InfoCard from "@/components/actionModal/InfoCard";
 import ActionBtn from "@/components/ui/ActionBtn";
 import Colors from "@/constants/Colors";
-import { db } from "@/config/FirebaseConfig";
+import { Medicine } from "@/constants/types";
+
+interface ActionModalParams extends Medicine {
+  selectedDate: string;
+  time: string;
+}
 
 export default function ActionModal() {
-  const medicine = useLocalSearchParams();
+  const { selectedDate, time, type, name, _when, comment } =
+    useLocalSearchParams() as unknown as ActionModalParams;
   const router = useRouter();
   // console.log(medicine);
-  const imageSource = medType.find(
-    (item) => item.name === medicine.type
-  )?.imageSrc;
-
-  const updateStatus = async (status) => {
-    try {
-      // Add a new document in collection "cities"
-      const docRef = doc(db, "medication", medicine?.docID);
-      await updateDoc(docRef, {
-        action: arrayUnion({
-          status: status,
-        }),
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const imageSource = medType.find((item) => item.name === type)?.imageSrc;
 
   return (
     <ScrollView contentContainerStyle={{ alignItems: "center", gap: 10 }}>
@@ -48,19 +37,19 @@ export default function ActionModal() {
       </TouchableOpacity>
 
       <Image source={imageSource} style={styles.image} />
-      <Text style={styles.title}>{medicine.name}</Text>
+      <Text style={styles.title}>{name}</Text>
 
       <View style={styles.infoContainer}>
-        <InfoCard label="Date:" text={medicine.selectedDate} />
-        <InfoCard label="Time:" text={medicine.time} />
+        <InfoCard label="Date:" text={selectedDate} />
+        <InfoCard label="Time:" text={time} />
       </View>
 
       <View style={styles.infoContainer}>
-        <InfoCard label="Type:" text={medicine.type} />
-        <InfoCard label="When:" text={medicine.when} />
+        <InfoCard label="Type:" text={type} />
+        <InfoCard label="When:" text={_when} />
       </View>
       <View style={[styles.infoContainer]}>
-        <InfoCard label="Comment:" text={medicine.comment} />
+        <InfoCard label="Comment:" text={comment} />
       </View>
 
       {/* Buttons */}

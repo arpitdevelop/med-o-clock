@@ -109,8 +109,6 @@ export default function AddMedicationForm({
           ? "Add Another Reminder"
           : "Add a Reminder"}
       </AddReminder>
-
-      {/* <TimePicker time={formData?.time} onTimeSelect={handleInputChange} /> */}
     </View>
   );
 }

@@ -11,7 +11,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "@/constants/Colors";
 import { useRouter } from "expo-router";
 
-import { auth } from "./../../config/FirebaseConfig";
 import {
   createUserWithEmailAndPassword,
   updateCurrentUser,

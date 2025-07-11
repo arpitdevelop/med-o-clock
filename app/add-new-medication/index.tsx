@@ -16,19 +16,14 @@ import AddMedicationForm from "@/components/addNewMedication/AddMedicationForm";
 import Colors from "@/constants/Colors";
 import { formDataType } from "@/constants/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { doc, setDoc } from "firebase/firestore";
-
-import {
-  formatDateToStringFull,
-  formatTimeToHHMM,
-  startToEndDates,
-} from "@/utils/dateFormatter";
-import { db } from "@/config/FirebaseConfig";
-import { getLocalStorage } from "@/service/storage";
+import { addMedicine } from "@/database/database";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function AddNewMedication() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const db = useSQLiteContext();
 
   const { top } = useSafeAreaInsets();
 
@@ -112,31 +107,11 @@ export default function AddNewMedication() {
       return;
     }
 
-    const dates = startToEndDates(submitData.startDate, submitData.endDate);
-    console.log("verified: ", submitData);
-    console.log(dates);
-    const user = await getLocalStorage("userDetail");
+    console.log(db);
 
-    try {
-      // Add a new document in collection "medication"
-      const docID = Date.now().toString();
-      await setDoc(doc(db, "medication", docID), {
-        ...submitData,
-        userEmail: user.email,
-        docID: docID,
-        dates: dates,
-      });
-      Alert.alert("Great!", "New medication added successfully!", [
-        {
-          text: "Okay",
-          onPress: () => router.replace("/(tabs)"),
-        },
-      ]);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    const result = await addMedicine(db, submitData);
+    console.log(result);
+    setLoading(false);
   };
 
   return (

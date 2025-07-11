@@ -1,7 +1,16 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import { useRouter } from "expo-router";
+
+const { width } = Dimensions.get("window");
 
 export default function NoMedications() {
   const router = useRouter();
@@ -12,15 +21,13 @@ export default function NoMedications() {
         style={styles.image}
       />
       <Text style={styles.mainText}>No Medications</Text>
-      <Text style={styles.subText}>
-        You have 0 medications setup, please setup a new one!
-      </Text>
-      <TouchableOpacity
+      <Text style={styles.subText}>You have no medications for today!</Text>
+      {/* <TouchableOpacity
         style={styles.addButton}
         onPress={() => router.push("/add-new-medication")}
       >
         <Text style={styles.buttonText}>+ Add New Medication</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
@@ -28,14 +35,16 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 80,
+    width: width - 24,
+    gap: 8,
   },
   image: {
     width: 100,
     height: 100,
   },
   mainText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
     marginVertical: 10,
   },

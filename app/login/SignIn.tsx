@@ -13,7 +13,6 @@ import Colors from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/config/FirebaseConfig";
 import { setLocalStorage } from "@/service/storage";
 
 export default function SignIn() {
